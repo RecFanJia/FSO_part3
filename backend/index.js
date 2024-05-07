@@ -1,7 +1,9 @@
 const express = require('express')
 const morgan = require('morgan')
+const cors = require('cors')
 const app = express()
 app.use(express.json())
+app.use(cors())
 app.use(morgan(':method :url :status :res[content-length] - :response-time ms :body'))
 morgan.token('body', function (req, res) {
   if (req.method === 'POST' && req.headers['content-type'] && req.headers['content-type'].includes('application/json')) {
