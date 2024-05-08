@@ -9,10 +9,8 @@ const password = process.argv[2]
 
 const url =
   `mongodb+srv://geofanjia:${password}@cluster0.dw4tvqm.mongodb.net/`
-  
 
 mongoose.set('strictQuery',false)
-
 mongoose.connect(url)
 
 const personSchema = new mongoose.Schema({
