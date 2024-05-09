@@ -40,7 +40,7 @@ const App = () => {
             return { ...person, number: newNumber };
           } else {return person}})
         const confirmAdd = confirm(
-          `${personup} is already added to phonebook, replace the old number with a new one?`
+          `${personup.name} is already added to phonebook, replace the old number with a new one?`
         )// ask for confirmation for adding
 
       if (!confirmAdd) {
@@ -66,9 +66,7 @@ const App = () => {
     }
     
     }else{
-    //const lastPersonId = persons.length > 0 ? parseInt(persons[persons.length-1].id) : 0;
-    console.log(`lstpersonid is`, lastPersonId)
-    //const newId = lastPersonId + 1//base on the last person's id to create new person
+
 
     const personObject = {
       name: newName,

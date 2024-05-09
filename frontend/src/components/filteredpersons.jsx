@@ -13,7 +13,7 @@ const Persons = (props) =>{
     <ul style={listStyle}>
         {props.persons.filter(person => 
         person.name.toLowerCase().includes(props.filterName.toLowerCase())).map(person => (
-          <li key={person.id} style={itemStyle}>
+          <li key={person.name} style={itemStyle}>
             {person.name} {person.number}
             <form style={{ marginLeft: '10px' }}>
               <button 
