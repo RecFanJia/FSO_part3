@@ -11,6 +11,7 @@ app.use(cors())
 app.use(morgan(':method :url :status :res[content-length] - :response-time ms :body'))
 app.use(express.static('dist'))
 
+
 morgan.token('body', function (req, res) {
   if (req.method === 'POST' && req.headers['content-type'] && req.headers['content-type'].includes('application/json')) {
       return JSON.stringify(req.body);
@@ -20,24 +21,35 @@ morgan.token('body', function (req, res) {
 });
 
 
-//app.get('/info', (request, response) => {
-//    response.send(   
-//     `Phonebook has info for ${persons.length} people<br/>
-//     ${Date()}`
-//    )
-//  })
+app.get('/info', (request, response, next) => {
+  Person.countDocuments({})
+  .then(count => {
+      response.send(`
+          Phonebook has info for ${count} people<br/>
+          ${new Date()}
+      `);
+  })
+  .catch(error => next(error)); 
+})
 
 app.get('/api/persons', (request, response) => {
-  Person.find({}).then(persons => {
+  Person.find({})
+  .then(persons => {
     response.json(persons)
   })
 })
 
 
-app.get('/api/persons/:_id', (request, response) => {
-  Person.findById(request.params._id).then(person => {
-    response.json(person)
+app.get('/api/persons/:_id', (request, response, next) => {
+  Person.findById(request.params._id)
+  .then(person => {
+    if (person) {
+      response.json(person)
+    } else {
+      response.status(404).end()
+    }
   })
+  .catch(error => next(error))
   })
 
 app.delete('/api/persons/:_id', (request, response) => {
@@ -82,6 +94,33 @@ person.save().then(savedPerson => {
   response.json(savedPerson)
 })
 })
+
+app.put('/api/persons/:id', (request, response, next) => {
+  const { id } = request.params;
+  const { number } = request.body;
+
+  Person.findByIdAndUpdate(id, { number }, { new: true, runValidators: true, context: 'query' })
+    .then(updatedPerson => {
+      if (updatedPerson) {
+        response.json(updatedPerson);
+      } else {
+        response.status(404).json({ error: 'Person not found' });
+      }
+    })
+    .catch(error => next(error));
+});
+
+const errorHandler = (error, request, response, next) => {
+  console.error(error.message)
+
+  if (error.name === 'CastError') {
+    return response.status(400).send({ error: 'malformatted id' })
+  } 
+
+  next(error)
+}
+
+app.use(errorHandler)
 
 const PORT = process.env.PORT
 app.listen(PORT, () => {

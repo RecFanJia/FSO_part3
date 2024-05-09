@@ -1,5 +1,7 @@
 GET http://localhost:3001/api/persons
 ###
+GET http://localhost:3001/info
+###
 GET http://localhost:3001/api/persons/663bee0b27109993fda3e318
 ###
 DELETE http://localhost:3001/api/persons/663beef7a126bca9933fbe69
@@ -7,9 +9,17 @@ DELETE http://localhost:3001/api/persons/663beef7a126bca9933fbe69
 POST http://localhost:3001/api/persons
 Content-Type: application/json
 
-
-
 {
 "name": "Zhang San",
 "number": "1234"
+}
+
+###
+PUT http://localhost:3001/api/persons/663c8ae86a2418d3aa9b79bf
+Content-Type: application/json
+
+{
+"id":"663c8ae86a2418d3aa9b79bf",   
+"name": "Zhang San",
+"number": "123456"
 }
