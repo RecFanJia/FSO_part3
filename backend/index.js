@@ -12,7 +12,7 @@ app.use(morgan(':method :url :status :res[content-length] - :response-time ms :b
 app.use(express.static('dist'))
 
 
-morgan.token('body', function (req, res) {
+morgan.token('body', function (req) {
   if (req.method === 'POST' && req.headers['content-type'] && req.headers['content-type'].includes('application/json')) {
       return JSON.stringify(req.body);
   } else {
@@ -52,7 +52,7 @@ app.get('/api/persons/:_id', (request, response, next) => {
   .catch(error => next(error))
   })
 
-app.delete('/api/persons/:_id', (request, response) => {
+app.delete('/api/persons/:_id', (request, response, next) => {
     Person.findByIdAndDelete(request.params._id)
     .then(result => {
       if (result) {
