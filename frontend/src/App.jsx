@@ -2,7 +2,7 @@ import { useState, useEffect  } from 'react'
 import Filter from './components/filter'
 import PersonForm from './components/personform'
 import Persons from './components/filteredpersons'
-import noteService from './services/persons'
+import personService from './services/persons'
 import { Notification, BadNotification } from './components/notification'
 
 const App = () => {
@@ -14,7 +14,7 @@ const App = () => {
   const [badnotification, setBadNotification] = useState(null)
 
   useEffect(() => {
-    noteService
+    personService
     .getAll()
     .then(response => {
       console.log('render', persons.length, 'persons',)
@@ -40,14 +40,14 @@ const App = () => {
             return { ...person, number: newNumber };
           } else {return person}})
         const confirmAdd = confirm(
-          `${personup} is already added to phonebook, replace the old number with a new one?`
+          `${personup.name} is already added to phonebook, replace the old number with a new one?`
         )// ask for confirmation for adding
 
       if (!confirmAdd) {
         console.log('Adding cancelled by user.');
        
       }else{
-        noteService
+        personService
         .update(personId, updatenumber)
         .then(() => {
           setPersons(updatedPersons)   
@@ -66,17 +66,15 @@ const App = () => {
     }
     
     }else{
-    const lastPersonId = persons.length > 0 ? parseInt(persons[persons.length-1].id) : 0;
-    console.log(`lstpersonid is`, lastPersonId)
-    const newId = lastPersonId + 1//base on the last person's id to create new person
+
 
     const personObject = {
       name: newName,
       number: newNumber,
-      id: (newId).toString() 
+      //id: (newId).toString() 
     }
     
-    noteService
+    personService
     .create(personObject)
     .then(() => {
       setPersons(persons=> persons.concat(personObject))
@@ -84,9 +82,14 @@ const App = () => {
       setNewNumber('')
       setNotification(`Added ${newName} `)
       setTimeout(() => {setNotification(null)}, 5000)
-    });
+    })
+    .catch(error => {
+      console.log(error.response.data.error)
+      setBadNotification(`${error.response.data.error}`)
+      setTimeout(() => {setBadNotification(null)}, 5000)
+    })
+    
   }
-
 }
 
   const deletePerson = (id) => {
@@ -97,7 +100,7 @@ const App = () => {
     return; // ask for confirmation for deleting
   }
 
-    noteService.remove(id)
+    personService.remove(id)
     .then(() => {
         console.log(`Deleted person with id ${id}`)
         setNotification(`Deleted ${deleteName}`)
